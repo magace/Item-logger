@@ -1,0 +1,8 @@
+{
+  "webhook_url": "ENTER DISCORD WEBHOOK HERE",
+  "img_paths": [
+    "\\\\NETWORDKPATH\\PATHTOKOLBOTIMAGES\\images",
+    "C:\\Users\\user\\Desktop\\kolbotlocalpath\\images",
+    "C:\\REMEMBER\\TO\\USE\\DOUBLE\\BACK\\SLASHES"
+  ]
+}
