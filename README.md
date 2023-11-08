@@ -19,3 +19,6 @@ Another thing you can do is add me.profile to keptline to see what profile found
 "keptLine && (desc += ("\n\\xffc0Line: " + keptLine + " " + me.profile));"
 
 Run the python script and wait for images to appear.
+
+Images:
+![image](https://github.com/magace/Item-logger/assets/7795098/0131c964-e102-4072-b5b8-c0923aaef0a8)
