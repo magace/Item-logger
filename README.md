@@ -22,3 +22,4 @@ Run the python script and wait for images to appear.
 
 Images:
 ![image](https://github.com/magace/Item-logger/assets/7795098/0131c964-e102-4072-b5b8-c0923aaef0a8)
+![image](https://github.com/magace/Item-logger/assets/7795098/7769976e-78ad-4774-8b0d-c849603c7942)
