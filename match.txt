@@ -1,20 +1,19 @@
-StoneofJordan 
-zodrune
-chamrune
-berrune
-jahrune
-malrune
-ohmrune
-surrune
-vexrune
-lorune
-gulrune
-malrune
-istrune
+Stone of Jordan 
+zod rune
+cham rune
+ber rune
+jah rune
+mal rune
+ohm rune
+sur rune
+vex rune
+lo rune
+gul rune
+mal rune
+ist rune
 gore
 drac
-finesmallcharmofvita
 griffon
-ofvita
+of vita
 annihilius
 hellfire

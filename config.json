@@ -4,5 +4,6 @@
     "\\\\NETWORDKPATH\\PATHTOKOLBOTIMAGES\\images",
     "C:\\Users\\user\\Desktop\\kolbotlocalpath\\images",
     "C:\\REMEMBER\\TO\\USE\\DOUBLE\\BACK\\SLASHES"
-  ]
+  ],
+  useMatchFile": true
 }

@@ -9,77 +9,96 @@ import re
 import datetime
 from rich import print
 import pygetwindow as gw
-import pydirectinput
+import pydirectinput  # Add this import
 import json
 
 if getattr(sys, 'frozen', False):
+    # If the application is run as a bundle (pyinstaller .exe)
     application_path = os.path.dirname(sys.executable)
 elif __file__:
+    # If the application is run from a python script (not bundled)
     application_path = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(application_path, "config.json"), "r") as config_file:
     config = json.load(config_file)
 
 webhook_url = config["webhook_url"]
 match_file = os.path.join(application_path, "match.txt")
+use_match_file = config.get("useMatchFile", False)
 
 def main():
     print("[blue]Discord Item Logger Loaded...[/blue]")
     print("[blue]Match File Loaded...[/blue]")
+    print(f"[blue]Using match file: {use_match_file}[/blue]")    
     while True:
         check_files()
         check_error_window()
         time.sleep(2)
 def check_files():
-    prev_size = os.path.getsize(match_file)
+    if use_match_file:
+        prev_size = os.path.getsize(match_file)
+    else:
+        prev_size = None
+
     for img_path in config["img_paths"]:
         files = os.listdir(img_path)
         for file in files:
             file_path = os.path.join(img_path, file)
             if os.path.isfile(file_path):
-                read_text(file, img_path)  
-                current_size = os.path.getsize(match_file)
-                if current_size != prev_size:
-                    print(f"[blue]Match File Loaded...[/blue]")
-                    prev_size = current_size
-                    with open(match_file, "r") as file:
-                        lines = [line.strip().lower().replace(' ', '') for line in file.readlines()]
-                os.remove(file_path)
+                item_posted = read_text(file, img_path)
+                if item_posted:
+                    os.remove(file_path)
+                    if use_match_file:
+                        current_size = os.path.getsize(match_file)
+                        if current_size != prev_size:
+                            print(f"[blue]Match File Updated...[/blue]")
+                            prev_size = current_size
+
 
 def check_error_window():
     error_title = "An error has occured!"
     try:
-        # Find the window with the error title.  You would probably need to change x y coords.
+        # Find the window with the error title
         error_window = gw.getWindowsWithTitle(error_title)
         if error_window:
             print("[bright_red]Error window found. Bringing to top and clicking 'OK'.[/bright_red]")
+            # Bring the error window to the top
             error_window[0].activate()
+            # Click the 'OK' button using pydirectinput
             pydirectinput.click(1103, 595, duration=0.5)
     except IndexError:
+        # If the window with the error title is not found, IndexError will be raised
         pass
 def read_text(file_name, img_path):
-    modified_file_name = os.path.splitext(file_name.lower())[0].replace(' ', '')
     current_time = datetime.datetime.now().strftime("%m/%d/%y %I:%M %p")
-    with open(match_file, "r") as file:
-        lines = [line.strip().lower().replace(' ', '') for line in file.readlines()]
-    for line in lines:
-        if line in modified_file_name:
-            print(f"[bright_blue]{current_time} - Match found for: {file_name}[/bright_blue]")
-            webhook(file_name, img_path)  # pass the original file name and img_path
-            return True
-    file_name_no_ext = os.path.splitext(file_name)[0]  # Remove the extension
-    file_name_no_numbers = re.sub(r'\d', '', file_name_no_ext)  # Remove the numbers
-    print(f"[cyan]{current_time} - Item Found: {file_name_no_numbers}[/cyan]")     
+    if use_match_file:
+        modified_file_name = os.path.splitext(file_name.lower())[0].replace(' ', '')
+        with open(match_file, "r") as file:
+            lines = [line.strip().lower().replace(' ', '') for line in file.readlines()]
+        for line in lines:
+            if line in modified_file_name:
+                print(f"[bright_blue]{current_time} - Match found for: {file_name}[/bright_blue]")
+                webhook(file_name, img_path)
+                return True
+    else:
+        print(f"[cyan]{current_time} - Item Found: {file_name}[/cyan]") 
+        webhook(file_name, img_path)
+        return True
     return False
+
 def webhook(file_to_send, img_path):
     file_path = os.path.join(img_path, file_to_send)
     filename = os.path.basename(file_path)
     mime_type = mimetypes.guess_type(file_path)[0]
     with open(file_path, "rb") as f:
         files = {"file": (filename, f, mime_type)}
+        # Remove the file extension from the filename
         display_name = os.path.splitext(filename)[0]
+        # Strip the 'Kept' prefix and numbers from the filename using regular expressions
         display_name = re.sub(r'^Kept\s+|\d+', '', display_name).strip()
+        # Prepare the message with the file name and current date and time
         current_time = datetime.datetime.now().strftime("%m/%d/%y %I:%M %p")
         message = f"```\n{current_time} - {display_name}\n```"
+        # Send the message along with the file as an attachment
         response = requests.post(webhook_url, data={"content": message}, files=files)
         print(f"[yellow]{current_time} - Discord Hook Sent: {display_name}[/yellow]")
 if __name__ == "__main__":
