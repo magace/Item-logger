@@ -1,18 +1,27 @@
 # Item logger
- Sends specific loot from Kolbot to discord
+ Sends loot from Kolbot to discord
 
 Basically we are going to make kolbot save images of everything it loots.
 Next the python script will parse the folder(s) images and check if the name matches one of the lines in match.txt.
 If it does it will send the image to the discord hook specified in the config.
 
-How to setup:
-Install Python and pip install required libs.
-Edit config.js, you will need to enter your discord webhook here, as well as set the path to kolbots images folder. 
-Make sure to use double back slashes.
-Edit match.txt here you will enter any item names you actually want to send to discord.  I personally didn't want every single item it finds sending.
+**How to setup:**
+Install Python use pip to install required libs.
 
+**Edit config.js**
+Enter your Discord hook inside webhook_url
 
-Kolbot:  Locate and open Item.js (d2bs/kolbot/libs/core/item.js)
+Set your path to kolbot images folder
+
+Set useMatchFile to true or false.  This will display all items you find if set to false.  If set to true it will only show files in match.txt
+
+Set clearD2BotErrors to true or false.  This will pusk "OK" when d2bot popps up the "an error has occured" message when set to true
+
+<hr>
+
+Kolbot Setup:
+
+Locate and open Item.js (d2bs/kolbot/libs/core/item.js)
 
 Search for ```D2Bot.printToItemLog(itemObj);```
 
