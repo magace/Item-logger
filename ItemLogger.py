@@ -9,7 +9,7 @@ import re
 import datetime
 from rich import print
 import pygetwindow as gw
-import pydirectinput  # Add this import
+import pydirectinput
 import json
 
 if getattr(sys, 'frozen', False):
@@ -24,14 +24,19 @@ with open(os.path.join(application_path, "config.json"), "r") as config_file:
 webhook_url = config["webhook_url"]
 match_file = os.path.join(application_path, "match.txt")
 use_match_file = config.get("useMatchFile", False)
+clear_d2bot_errors = config.get("clearD2BotErrors", False)
+error_x = config["errorX"]
+error_y = config["errorY"]
 
 def main():
-    print("[blue]Discord Item Logger Loaded...[/blue]")
-    print("[blue]Match File Loaded...[/blue]")
-    print(f"[blue]Using match file: {use_match_file}[/blue]")    
+    print("[blue]Discord Item Logger Loaded[/blue]")
+    print("[blue]Match File Loaded[/blue]")
+    print(f"[blue]Using match file: {use_match_file}[/blue]")
+    print(f"[blue]Clearing D2BOT Errors: {clear_d2bot_errors} Clicking OK at {error_x} x {error_y}[/blue]")    
     while True:
         check_files()
-        check_error_window()
+        if clear_d2bot_errors:
+            check_error_window(error_x, error_y)
         time.sleep(2)
 def check_files():
     if use_match_file:
@@ -52,22 +57,21 @@ def check_files():
                         if current_size != prev_size:
                             print(f"[blue]Match File Updated...[/blue]")
                             prev_size = current_size
-
-
-def check_error_window():
+def check_error_window(error_x, error_y):
     error_title = "An error has occured!"
     try:
         # Find the window with the error title
         error_window = gw.getWindowsWithTitle(error_title)
         if error_window:
-            print("[bright_red]Error window found. Bringing to top and clicking 'OK'.[/bright_red]")
+            print(f"[bright_red]Error window found. Bringing to top and clicking 'OK' at {error_x} x {error_y}.[/bright_red]")
             # Bring the error window to the top
             error_window[0].activate()
-            # Click the 'OK' button using pydirectinput
-            pydirectinput.click(1103, 595, duration=0.5)
+            # Click the 'OK' button using pydirectinput at the specified coordinates
+            pydirectinput.click(error_x, error_y, duration=0.5)
     except IndexError:
         # If the window with the error title is not found, IndexError will be raised
         pass
+
 def read_text(file_name, img_path):
     current_time = datetime.datetime.now().strftime("%m/%d/%y %I:%M %p")
     if use_match_file:
@@ -107,3 +111,4 @@ if __name__ == "__main__":
             main()
         except Exception as e:
             print("Exception: ", e)
+    

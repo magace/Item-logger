@@ -5,5 +5,8 @@
     "C:\\Users\\user\\Desktop\\kolbotlocalpath\\images",
     "C:\\REMEMBER\\TO\\USE\\DOUBLE\\BACK\\SLASHES"
   ],
-  useMatchFile": true
+  useMatchFile": true,
+  "clearD2BotErrors": false,
+  "errorX": 0,
+  "errorY": 0
 }
